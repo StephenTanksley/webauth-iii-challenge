@@ -21,7 +21,9 @@ router.post('/register', async (req, res, next) => {
 router.post('/login', async (req, res, next) => {
     try {
         const { username, password } = req.body 
+
         const user = await userModel.findBy({username}).first()
+        
         const passwordValid = await bcrypt.compare(password, user.password)
 
         if(user && passwordValid) {
@@ -43,7 +45,7 @@ router.post('/login', async (req, res, next) => {
 })
 
 const generateToken = (user) => {
-    
+
     const payload = {
         subject: user.id,
         username: user.username,
@@ -53,7 +55,7 @@ const generateToken = (user) => {
         expiresIn: '1d'
     }
     
-    return jwt.sign(payload, secrets.jwtSecret, options)
+    return jwt.sign(payload, secrets.jwt, options)
 }
 
 router.get('/protected', authorization(), async(req, res, next) => {
